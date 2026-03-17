@@ -7,11 +7,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -19,6 +22,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.myapplication.ui.theme.MyApplicationTheme
+
+enum class Screen(val route: String) {
+    APP_LIST("app_list"),
+    APP_DETAILS("app_details/{appId}");
+
+    companion object {
+        const val ARG_APP_ID = "appId"
+    }
+
+    fun withAppId(appId: String): String =
+        "app_details/$appId"
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,19 +44,15 @@ class MainActivity : ComponentActivity() {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color(0xFF5F9EA0))
+                        .background(MaterialTheme.colorScheme.primary)
                         .statusBarsPadding()
+                        .navigationBarsPadding()
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(
-                                color = Color.White,
-                                shape = androidx.compose.foundation.shape.RoundedCornerShape(
-                                    topStart = 32.dp,
-                                    topEnd = 32.dp
-                                )
-                            )
+                            .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
+                            .background(MaterialTheme.colorScheme.background)
                             .padding(top = 40.dp)
                     ) {
                         AppNavHost(
@@ -60,22 +71,22 @@ fun AppNavHost(modifier: Modifier = Modifier) {
 
     NavHost(
         navController = navController,
-        startDestination = "app_list",
+        startDestination = Screen.APP_LIST.route,
         modifier = modifier
     ) {
-        composable("app_list") {
+        composable(Screen.APP_LIST.route) {
             AppListScreen(
                 onItemClick = { appItem ->
-                    navController.navigate("app_details/${appItem.id}")
+                    navController.navigate(Screen.APP_DETAILS.withAppId(appItem.id))
                 }
             )
         }
 
         composable(
-            route = "app_details/{appId}",
-            arguments = listOf(navArgument("appId") { type = NavType.StringType })
+            route = Screen.APP_DETAILS.route,
+            arguments = listOf(navArgument(Screen.ARG_APP_ID) { type = NavType.StringType })
         ) { backStackEntry ->
-            val appId = backStackEntry.arguments?.getString("appId") ?: ""
+            val appId = backStackEntry.arguments?.getString(Screen.ARG_APP_ID) ?: ""
 
             val appItem = MockData.appList.find { it.id == appId }
 

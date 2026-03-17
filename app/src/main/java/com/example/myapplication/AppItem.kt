@@ -1,10 +1,8 @@
 package com.example.myapplication
 
-import androidx.annotation.DrawableRes
-
 data class AppItem(
     val id: String,
-    @DrawableRes val icon: Int,
+    val icon: String,
     val title: String,
     val description: String,
     val category: String,

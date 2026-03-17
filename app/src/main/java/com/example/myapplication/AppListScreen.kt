@@ -1,6 +1,5 @@
 package com.example.myapplication
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,14 +18,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -68,7 +66,7 @@ fun AppListItem(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 0.dp
@@ -86,10 +84,10 @@ fun AppListItem(
                 modifier = Modifier
                     .size(80.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFFF5F5F5))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
-                Image(
-                    painter = painterResource(id = appItem.icon),
+                AppIcon(
+                    iconString = appItem.icon,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
@@ -107,7 +105,7 @@ fun AppListItem(
                     text = appItem.title,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2,
                     lineHeight = 22.sp
                 )
@@ -116,7 +114,7 @@ fun AppListItem(
 
                 Text(
                     text = appItem.description,
-                    color = Color(0xFF666666),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp,
                     maxLines = 2,
                     lineHeight = 18.sp
@@ -126,7 +124,7 @@ fun AppListItem(
 
                 Text(
                     text = appItem.category,
-                    color = Color(0xFF808080),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Normal
                 )

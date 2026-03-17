@@ -1,6 +1,5 @@
 package com.example.myapplication
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,7 +41,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -71,7 +69,7 @@ fun AppDetailsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF5F5F5))
+                .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState())
         ) {
 
@@ -134,7 +132,7 @@ fun AppDetailsScreen(
 
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                color = Color.LightGray
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -176,14 +174,16 @@ fun Toolbar(
         title = {
             Text(
                 text = "О приложении",
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
             )
         },
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
                     painter = painterResource(id = android.R.drawable.ic_menu_close_clear_cancel),
-                    contentDescription = "Назад"
+                    contentDescription = "Назад",
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         },
@@ -191,12 +191,13 @@ fun Toolbar(
             IconButton(onClick = onShareClick) {
                 Icon(
                     painter = painterResource(id = android.R.drawable.ic_menu_share),
-                    contentDescription = "Поделиться"
+                    contentDescription = "Поделиться",
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         modifier = modifier
     )
@@ -220,11 +221,11 @@ fun AppDetailsHeader(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFFE0E0E0)),
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = appItem.icon),
+                AppIcon(
+                    iconString = appItem.icon,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
@@ -243,6 +244,7 @@ fun AppDetailsHeader(
                 text = appItem.title,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -263,7 +265,8 @@ fun AppDetailsHeader(
                 Text(
                     text = "4.5 ★",
                     style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -271,7 +274,7 @@ fun AppDetailsHeader(
                 Text(
                     text = "• 12+",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -279,7 +282,7 @@ fun AppDetailsHeader(
                 Text(
                     text = "• 120 МБ",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
         }
@@ -303,7 +306,8 @@ fun InstallButton(
         Text(
             text = "Установить",
             fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }
@@ -324,6 +328,7 @@ fun ScreenshotsList(
             text = "Скриншоты (${screenshotUrlList.size})",
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
@@ -394,7 +399,8 @@ fun AppDescription(
         Text(
             text = "Описание",
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            color = MaterialTheme.colorScheme.onSurface
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -404,6 +410,7 @@ fun AppDescription(
         Text(
             text = description,
             style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface,
             maxLines = if (isCollapsed) 3 else Int.MAX_VALUE,
             overflow = TextOverflow.Ellipsis,
             lineHeight = 22.sp
@@ -455,20 +462,21 @@ fun Developer(
             Text(
                 text = "Разработчик",
                 style = MaterialTheme.typography.labelMedium,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
 
             Text(
                 text = name,
                 style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 
         Icon(
             painter = painterResource(id = android.R.drawable.ic_menu_more),
             contentDescription = "Перейти",
-            tint = Color.Gray,
+            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             modifier = Modifier.size(20.dp)
         )
     }
