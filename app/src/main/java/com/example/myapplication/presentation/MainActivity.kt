@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,20 +8,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.myapplication.ui.theme.MyApplicationTheme
+import com.example.myapplication.data.MockData
+import com.example.myapplication.presentation.theme.MyApplicationTheme
 
 enum class Screen(val route: String) {
     APP_LIST("app_list"),
@@ -52,8 +53,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(top = 40.dp)
+                            .background(Color.White)
                     ) {
                         AppNavHost(
                             modifier = Modifier.fillMaxSize()
@@ -87,7 +87,6 @@ fun AppNavHost(modifier: Modifier = Modifier) {
             arguments = listOf(navArgument(Screen.ARG_APP_ID) { type = NavType.StringType })
         ) { backStackEntry ->
             val appId = backStackEntry.arguments?.getString(Screen.ARG_APP_ID) ?: ""
-
             val appItem = MockData.appList.find { it.id == appId }
 
             if (appItem != null) {

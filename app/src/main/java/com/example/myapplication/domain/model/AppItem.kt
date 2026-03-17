@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.domain.model
 
 data class AppItem(
     val id: String,
