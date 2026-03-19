@@ -1,4 +1,4 @@
-package com.example.myapplication.presentation
+package com.example.myapplication.presentation.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -49,111 +50,181 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.example.myapplication.data.MockData
+import com.example.myapplication.R
 import com.example.myapplication.domain.model.AppItem
+import com.example.myapplication.presentation.component.AppIcon
 import com.example.myapplication.presentation.theme.MyApplicationTheme
+import com.example.myapplication.presentation.viewmodel.AppDetailsViewModel
 import kotlinx.coroutines.launch
+
+data class AppDetailsUiState(
+    val appItem: AppItem? = null,
+    val isLoading: Boolean = false
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppDetailsScreen(
-    appItem: AppItem,
+    viewModel: AppDetailsViewModel,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val appItem by viewModel.appItem.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .verticalScroll(rememberScrollState())
-        ) {
-            Toolbar(
-                onBackClick = onBackClick,
-                onShareClick = {
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = "Данный функционал в разработке",
-                            duration = SnackbarDuration.Short
-                        )
-                    }
-                }
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            AppDetailsHeader(
+        AppDetailsContent(
+            uiState = AppDetailsUiState(
                 appItem = appItem,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            InstallButton(
-                onClick = {
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = "Данный функционал в разработке",
-                            duration = SnackbarDuration.Short
-                        )
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            if (appItem.screenshotUrls.isNotEmpty()) {
-                ScreenshotsList(
-                    screenshotUrlList = appItem.screenshotUrls,
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    snackbarHostState = snackbarHostState,
-                    coroutineScope = coroutineScope
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-
-            AppDescription(
-                description = appItem.description,
-                onReadMoreClick = {
-                    println("Читать ещё")
+                isLoading = isLoading
+            ),
+            onBackClick = onBackClick,
+            onShareClick = {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = "Данный функционал в разработке",
+                        duration = SnackbarDuration.Short
+                    )
                 }
-            )
+            },
+            onInstallClick = {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = "Данный функционал в разработке",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            },
+            onScreenshotClick = {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = "Данный функционал в разработке",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            },
+            onDeveloperClick = {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = "Данный функционал в разработке",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            },
+            onReadMoreClick = {
+                println("Читать ещё")
+            },
+            snackbarHostState = snackbarHostState
+        )
+    }
+}
 
-            Spacer(modifier = Modifier.height(12.dp))
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppDetailsContent(
+    uiState: AppDetailsUiState,
+    onBackClick: () -> Unit,
+    onShareClick: () -> Unit,
+    onInstallClick: () -> Unit,
+    onScreenshotClick: () -> Unit,
+    onDeveloperClick: () -> Unit,
+    onReadMoreClick: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            uiState.appItem?.let { item ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Toolbar(
+                        onBackClick = onBackClick,
+                        onShareClick = onShareClick
+                    )
 
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
-            )
+                    Spacer(modifier = Modifier.height(8.dp))
 
-            Spacer(modifier = Modifier.height(12.dp))
+                    AppDetailsHeader(
+                        appItem = item,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
 
-            Developer(
-                name = "Разработчик",
-                onClick = {
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = "Данный функционал в разработке",
-                            duration = SnackbarDuration.Short
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    InstallButton(
+                        onClick = onInstallClick,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    if (item.screenshotUrls.isNotEmpty()) {
+                        ScreenshotsList(
+                            screenshotUrlList = item.screenshotUrls,
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            onScreenshotClick = onScreenshotClick
                         )
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp)
-            )
 
-            Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+
+                    AppDescription(
+                        description = item.description,
+                        onReadMoreClick = onReadMoreClick
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Developer(
+                        name = "Разработчик",
+                        onClick = onDeveloperClick,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            } ?: run {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Приложение не найдено",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
         }
 
         SnackbarHost(
@@ -314,8 +385,7 @@ fun InstallButton(
 fun ScreenshotsList(
     screenshotUrlList: List<String>,
     contentPadding: PaddingValues,
-    snackbarHostState: SnackbarHostState,
-    coroutineScope: kotlinx.coroutines.CoroutineScope,
+    onScreenshotClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -338,14 +408,7 @@ fun ScreenshotsList(
             items(screenshotUrlList) { url ->
                 ScreenshotItem(
                     url = url,
-                    onClick = {
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = "Данный функционал в разработке",
-                                duration = SnackbarDuration.Short
-                            )
-                        }
-                    }
+                    onClick = onScreenshotClick
                 )
             }
         }
@@ -481,9 +544,49 @@ fun Developer(
 @Composable
 fun AppDetailsScreenPreview() {
     MyApplicationTheme {
-        AppDetailsScreen(
-            appItem = MockData.appList[0],
-            onBackClick = {}
+        AppDetailsContent(
+            uiState = AppDetailsUiState(
+                appItem = AppItem(
+                    id = "1",
+                    icon = "check_circle_unread_24px",
+                    title = "СберБанк Онлайн",
+                    description = "Больше чем банк. Управляйте финансами, платите, копите и инвестируйте. Мгновенные переводы, оплата услуг без комиссии, вклады под высокий процент, кредиты за 2 минуты. Кэшбэк бонусами Спасибо и биометрическая авторизация.",
+                    category = "Финансы",
+                    screenshotUrls = listOf(
+                        "https://apk28.ru/wp-content/uploads/f919ef6f-2715-4118-b006-5339bd596c2f-699x1024.jpg",
+                        "https://apk28.ru/wp-content/uploads/f919ef6f-2715-4118-b006-5339bd596c2f-699x1024.jpg",
+                        "https://apk28.ru/wp-content/uploads/f919ef6f-2715-4118-b006-5339bd596c2f-699x1024.jpg"
+                    )
+                ),
+                isLoading = false
+            ),
+            onBackClick = {},
+            onShareClick = {},
+            onInstallClick = {},
+            onScreenshotClick = {},
+            onDeveloperClick = {},
+            onReadMoreClick = {},
+            snackbarHostState = SnackbarHostState()
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AppDetailsScreenLoadingPreview() {
+    MyApplicationTheme {
+        AppDetailsContent(
+            uiState = AppDetailsUiState(
+                appItem = null,
+                isLoading = true
+            ),
+            onBackClick = {},
+            onShareClick = {},
+            onInstallClick = {},
+            onScreenshotClick = {},
+            onDeveloperClick = {},
+            onReadMoreClick = {},
+            snackbarHostState = SnackbarHostState()
         )
     }
 }

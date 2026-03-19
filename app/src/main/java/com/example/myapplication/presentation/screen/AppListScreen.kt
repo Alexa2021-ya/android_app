@@ -1,4 +1,4 @@
-package com.example.myapplication.presentation
+package com.example.myapplication.presentation.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,52 +34,77 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myapplication.R
 import com.example.myapplication.domain.model.AppItem
+import com.example.myapplication.presentation.component.AppIcon
 import com.example.myapplication.presentation.theme.MyApplicationTheme
-import com.example.myapplication.viewmodel.AppListViewModel
-import com.example.myapplication.viewmodel.SnackbarEvent
+import com.example.myapplication.presentation.viewmodel.AppListViewModel
+import com.example.myapplication.presentation.viewmodel.SnackbarEvent
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+data class AppListUiState(
+    val items: List<AppItem> = emptyList(),
+    val isLoading: Boolean = false
+)
 
 @Composable
 fun AppListScreen(
     onItemClick: (AppItem) -> Unit,
-    viewModel: AppListViewModel = viewModel(),
+    viewModel: AppListViewModel,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
-
     val appList by viewModel.appList.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.snackbarEvent.collectLatest { event ->
-            if (event is SnackbarEvent.Show) {
-                snackbarHostState.showSnackbar(
-                    message = event.message,
-                    duration = SnackbarDuration.Short
-                )
-                viewModel.onSnackbarShown()
+            when (event) {
+                is SnackbarEvent.Show -> {
+                    snackbarHostState.showSnackbar(
+                        message = event.message,
+                        duration = SnackbarDuration.Short
+                    )
+                }
             }
         }
     }
 
+    AppListContent(
+        uiState = AppListUiState(
+            items = appList,
+            isLoading = isLoading
+        ),
+        onItemClick = onItemClick,
+        onLogoClick = { viewModel.onLogoClick() },
+        snackbarHostState = snackbarHostState,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun AppListContent(
+    uiState: AppListUiState,
+    onItemClick: (AppItem) -> Unit,
+    onLogoClick: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Логотип
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -91,13 +116,12 @@ fun AppListScreen(
                     modifier = Modifier
                         .width(100.dp)
                         .height(42.dp)
-                        .clickable { viewModel.onLogoClick() },
+                        .clickable { onLogoClick() },
                     contentScale = ContentScale.Fit
                 )
             }
 
-            // Контент
-            if (isLoading) {
+            if (uiState.isLoading) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -119,13 +143,10 @@ fun AppListScreen(
                     ),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(appList) { appItem ->
+                    items(uiState.items) { appItem ->
                         AppListItem(
                             appItem = appItem,
-                            onClick = {
-                                viewModel.onAppItemClick(appItem)
-                                onItemClick(appItem)
-                            },
+                            onClick = { onItemClick(appItem) },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -219,9 +240,58 @@ fun AppListItem(
 @Preview(showBackground = true)
 @Composable
 fun AppListScreenPreview() {
+    val previewItems = listOf(
+        AppItem(
+            id = "1",
+            icon = "check_circle_unread_24px",
+            title = "СберБанк Онлайн",
+            description = "Удобный и безопасный онлайн-банк",
+            category = "Финансы",
+            screenshotUrls = emptyList()
+        ),
+        AppItem(
+            id = "2",
+            icon = "y_circle_24px",
+            title = "Яндекс.Браузер",
+            description = "Быстрый и безопасный браузер",
+            category = "Инструменты",
+            screenshotUrls = emptyList()
+        ),
+        AppItem(
+            id = "3",
+            icon = "alternate_email_24px",
+            title = "Почта Mail.ru",
+            description = "Почтовый клиент",
+            category = "Инструменты",
+            screenshotUrls = emptyList()
+        )
+    )
+
     MyApplicationTheme {
-        AppListScreen(
-            onItemClick = {}
+        AppListContent(
+            uiState = AppListUiState(
+                items = previewItems,
+                isLoading = false
+            ),
+            onItemClick = {},
+            onLogoClick = {},
+            snackbarHostState = SnackbarHostState()
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AppListScreenLoadingPreview() {
+    MyApplicationTheme {
+        AppListContent(
+            uiState = AppListUiState(
+                items = emptyList(),
+                isLoading = true
+            ),
+            onItemClick = {},
+            onLogoClick = {},
+            snackbarHostState = SnackbarHostState()
         )
     }
 }

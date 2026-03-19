@@ -1,10 +1,10 @@
-package com.example.myapplication.data
+package com.example.myapplication.data.datasource
 
-import com.example.myapplication.domain.model.AppItem
+import com.example.myapplication.data.dto.AppItemDto
 
-object MockData {
-    val appList = listOf(
-        AppItem(
+object MockDataSource {
+    val appListDto = listOf(
+        AppItemDto(
             id = "1",
             icon = "check_circle_unread_24px",
             title = "СберБанк Онлайн",
@@ -18,7 +18,7 @@ object MockData {
                 "https://apk28.ru/wp-content/uploads/f919ef6f-2715-4118-b006-5339bd596c2f-699x1024.jpg"
             )
         ),
-        AppItem(
+        AppItemDto(
             id = "2",
             icon = "y_circle_24px",
             title = "Яндекс.Браузер — с Алисой",
@@ -26,7 +26,7 @@ object MockData {
             category = "Инструменты",
             screenshotUrls = emptyList()
         ),
-        AppItem(
+        AppItemDto(
             id = "3",
             icon = "alternate_email_24px",
             title = "Почта Mail.ru",
@@ -34,7 +34,7 @@ object MockData {
             category = "Инструменты",
             screenshotUrls = emptyList()
         ),
-        AppItem(
+        AppItemDto(
             id = "4",
             icon = "assistant_navigation_24px",
             title = "Яндекс Навигатор",
@@ -42,7 +42,7 @@ object MockData {
             category = "Транспорт",
             screenshotUrls = emptyList()
         ),
-        AppItem(
+        AppItemDto(
             id = "5",
             icon = "mts_24px",
             title = "Мой МТС",
@@ -50,7 +50,7 @@ object MockData {
             category = "Инструменты",
             screenshotUrls = emptyList()
         ),
-        AppItem(
+        AppItemDto(
             id = "6",
             icon = "assured_workload_24px",
             title = "Tinkoff",
@@ -58,7 +58,7 @@ object MockData {
             category = "Финансы",
             screenshotUrls = emptyList()
         ),
-        AppItem(
+        AppItemDto(
             id = "7",
             icon = "avito_24px",
             title = "Avito",
