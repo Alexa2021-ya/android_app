@@ -1,6 +1,7 @@
-package com.example.myapplication
+package com.example.myapplication.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,8 +50,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.myapplication.ui.theme.MyApplicationTheme
-import androidx.compose.foundation.clickable
+import com.example.myapplication.data.MockData
+import com.example.myapplication.domain.model.AppItem
+import com.example.myapplication.presentation.theme.MyApplicationTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,7 +74,6 @@ fun AppDetailsScreen(
                 .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState())
         ) {
-
             Toolbar(
                 onBackClick = onBackClick,
                 onShareClick = {
@@ -162,7 +163,6 @@ fun AppDetailsScreen(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Toolbar(
@@ -173,7 +173,7 @@ fun Toolbar(
     TopAppBar(
         title = {
             Text(
-                text = "О приложении",
+                text = "",
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -202,7 +202,6 @@ fun Toolbar(
         modifier = modifier
     )
 }
-
 
 @Composable
 fun AppDetailsHeader(
@@ -289,7 +288,6 @@ fun AppDetailsHeader(
     }
 }
 
-
 @Composable
 fun InstallButton(
     onClick: () -> Unit,
@@ -311,7 +309,6 @@ fun InstallButton(
         )
     }
 }
-
 
 @Composable
 fun ScreenshotsList(
@@ -384,7 +381,6 @@ fun ScreenshotItem(
     }
 }
 
-
 @Composable
 fun AppDescription(
     description: String,
@@ -434,7 +430,6 @@ fun AppDescription(
     }
 }
 
-
 @Composable
 fun Developer(
     name: String,
@@ -481,7 +476,6 @@ fun Developer(
         )
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
