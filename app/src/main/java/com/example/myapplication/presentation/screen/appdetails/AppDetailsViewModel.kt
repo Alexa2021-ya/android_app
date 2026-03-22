@@ -1,4 +1,4 @@
-package com.example.myapplication.presentation.viewmodel
+package com.example.myapplication.presentation.screen.appdetails
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -30,12 +30,11 @@ open class AppDetailsViewModel(
     private fun loadAppDetails() {
         viewModelScope.launch {
             _isLoading.value = true
-            try {
+            runCatching {
                 val item = getAppByIdUseCase(appId)
                 _appItem.value = item
-            } finally {
-                _isLoading.value = false
             }
+            _isLoading.value = false
         }
     }
 }

@@ -26,11 +26,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.myapplication.presentation.di.DependencyContainer
 import com.example.myapplication.presentation.navigation.Screen
-import com.example.myapplication.presentation.screen.AppDetailsScreen
-import com.example.myapplication.presentation.screen.AppListScreen
+import com.example.myapplication.presentation.screen.appdetails.AppDetailsScreen
+import com.example.myapplication.presentation.screen.applist.AppListScreen
 import com.example.myapplication.presentation.theme.MyApplicationTheme
-import com.example.myapplication.presentation.viewmodel.AppDetailsViewModel
-import com.example.myapplication.presentation.viewmodel.AppListViewModel
+import com.example.myapplication.presentation.screen.appdetails.AppDetailsViewModel
+import com.example.myapplication.presentation.screen.applist.AppListViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

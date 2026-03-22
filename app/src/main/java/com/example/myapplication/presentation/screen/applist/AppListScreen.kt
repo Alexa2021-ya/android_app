@@ -1,4 +1,4 @@
-package com.example.myapplication.presentation.screen
+package com.example.myapplication.presentation.screen.applist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,12 +44,7 @@ import com.example.myapplication.R
 import com.example.myapplication.domain.model.AppItem
 import com.example.myapplication.presentation.component.AppIcon
 import com.example.myapplication.presentation.theme.MyApplicationTheme
-import com.example.myapplication.presentation.viewmodel.AppListViewModel
-import com.example.myapplication.presentation.viewmodel.SnackbarEvent
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 data class AppListUiState(
     val items: List<AppItem> = emptyList(),

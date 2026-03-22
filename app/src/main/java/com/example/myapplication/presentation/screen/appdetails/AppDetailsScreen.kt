@@ -1,4 +1,4 @@
-package com.example.myapplication.presentation.screen
+package com.example.myapplication.presentation.screen.appdetails
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -52,11 +52,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.example.myapplication.R
 import com.example.myapplication.domain.model.AppItem
 import com.example.myapplication.presentation.component.AppIcon
 import com.example.myapplication.presentation.theme.MyApplicationTheme
-import com.example.myapplication.presentation.viewmodel.AppDetailsViewModel
 import kotlinx.coroutines.launch
 
 data class AppDetailsUiState(

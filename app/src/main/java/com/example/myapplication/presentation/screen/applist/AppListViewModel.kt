@@ -1,4 +1,4 @@
-package com.example.myapplication.presentation.viewmodel
+package com.example.myapplication.presentation.screen.applist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,12 +36,11 @@ class AppListViewModel(
     private fun loadAppList() {
         viewModelScope.launch {
             _isLoading.update { true }
-            try {
+            runCatching {
                 val list = getAppListUseCase()
                 _appList.update { list }
-            } finally {
-                _isLoading.update { false }
             }
+            _isLoading.update { false }
         }
     }
 
@@ -49,9 +48,5 @@ class AppListViewModel(
         viewModelScope.launch {
             _snackbarEvent.send(SnackbarEvent.Show("Данный функционал в разработке"))
         }
-    }
-
-    fun onAppItemClick(appItem: AppItem) {
-        // Логика для клика по элементу
     }
 }
