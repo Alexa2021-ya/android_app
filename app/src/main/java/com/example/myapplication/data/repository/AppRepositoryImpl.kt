@@ -8,8 +8,9 @@ import com.example.myapplication.domain.repository.AppRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class AppRepositoryImpl : AppRepository {
+class AppRepositoryImpl @Inject constructor() : AppRepository {
     override suspend fun getAppList(): List<AppItem> {
         delay(500)
         return MockDataSource.appListDto.mapToDomainList()

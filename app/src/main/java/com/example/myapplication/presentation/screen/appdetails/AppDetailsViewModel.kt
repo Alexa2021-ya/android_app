@@ -5,14 +5,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.domain.model.AppItem
 import com.example.myapplication.domain.usecase.GetAppByIdUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-open class AppDetailsViewModel(
-    savedStateHandle: SavedStateHandle,
-    private val getAppByIdUseCase: GetAppByIdUseCase
+@HiltViewModel
+class AppDetailsViewModel @Inject constructor(
+    private val getAppByIdUseCase: GetAppByIdUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val appId: String = checkNotNull(savedStateHandle["appId"])
