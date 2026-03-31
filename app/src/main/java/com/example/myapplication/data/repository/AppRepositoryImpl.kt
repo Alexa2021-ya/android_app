@@ -2,7 +2,7 @@ package com.example.myapplication.data.repository
 
 import com.example.myapplication.data.mapper.mapToDomain
 import com.example.myapplication.data.mapper.mapToDomainList
-import com.example.myapplication.data.network.api.ApiService
+import com.example.myapplication.network.api.ApiService
 import com.example.myapplication.domain.model.AppItem
 import com.example.myapplication.domain.repository.AppRepository
 import kotlinx.coroutines.flow.Flow

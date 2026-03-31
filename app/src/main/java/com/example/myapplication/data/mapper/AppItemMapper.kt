@@ -1,6 +1,6 @@
 package com.example.myapplication.data.mapper
 
-import com.example.myapplication.data.network.dto.CatalogItemDto
+import com.example.myapplication.network.dto.CatalogItemDto
 import com.example.myapplication.domain.model.AppItem
 
 fun CatalogItemDto.mapToDomain(): AppItem {

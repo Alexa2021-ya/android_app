@@ -1,6 +1,6 @@
-package com.example.myapplication.data.network.api
+package com.example.myapplication.network.api
 
-import com.example.myapplication.data.network.dto.CatalogItemDto
+import com.example.myapplication.network.dto.CatalogItemDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 
