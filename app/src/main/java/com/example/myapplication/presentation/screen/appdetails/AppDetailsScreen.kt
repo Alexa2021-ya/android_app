@@ -56,11 +56,9 @@ import com.example.myapplication.domain.appdetails.AppDetails
 import com.example.myapplication.presentation.component.AppIcon
 import com.example.myapplication.presentation.theme.MyApplicationTheme
 import kotlinx.coroutines.launch
-
-data class AppDetailsUiState(
-    val appDetails: AppDetails? = null,
-    val isLoading: Boolean = false
-)
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,19 +67,13 @@ fun AppDetailsScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val appDetails by viewModel.appDetails.collectAsStateWithLifecycle()
-    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    Box(
-        modifier = modifier.fillMaxSize()
-    ) {
+    Box(modifier = modifier.fillMaxSize()) {
         AppDetailsContent(
-            uiState = AppDetailsUiState(
-                appDetails = appDetails,
-                isLoading = isLoading
-            ),
+            uiState = uiState,
             onBackClick = onBackClick,
             onShareClick = {
                 coroutineScope.launch {
@@ -115,10 +107,13 @@ fun AppDetailsScreen(
                     )
                 }
             },
-            onReadMoreClick = {
-                println("Читать ещё")
-            },
+            onReadMoreClick = {  },
+            onWishlistClick = { viewModel.toggleWishlist() },
             snackbarHostState = snackbarHostState
+        )
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
 }
@@ -133,30 +128,32 @@ fun AppDetailsContent(
     onScreenshotClick: () -> Unit,
     onDeveloperClick: () -> Unit,
     onReadMoreClick: () -> Unit,
+    onWishlistClick: () -> Unit,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier.fillMaxSize()
-    ) {
+    Box(modifier = modifier.fillMaxSize()) {
         if (uiState.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
+            }
+        } else if (uiState.error != null) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Ошибка: ${uiState.error}")
             }
         } else {
             uiState.appDetails?.let { details ->
                 Column(
-                    modifier = Modifier
+                    Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                         .verticalScroll(rememberScrollState())
                 ) {
                     Toolbar(
                         onBackClick = onBackClick,
-                        onShareClick = onShareClick
+                        onShareClick = onShareClick,
+                        onWishlistClick = onWishlistClick,
+                        isInWishlist = details.isInWishlist
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -212,10 +209,7 @@ fun AppDetailsContent(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             } ?: run {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
                         text = "Приложение не найдено",
                         style = MaterialTheme.typography.headlineSmall,
@@ -224,11 +218,6 @@ fun AppDetailsContent(
                 }
             }
         }
-
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
     }
 }
 
@@ -237,31 +226,32 @@ fun AppDetailsContent(
 fun Toolbar(
     onBackClick: () -> Unit,
     onShareClick: () -> Unit,
+    onWishlistClick: () -> Unit,
+    isInWishlist: Boolean,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = {
-            Text(
-                text = "",
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        },
+        title = { Text("") },
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
                     painter = painterResource(id = android.R.drawable.ic_menu_close_clear_cancel),
-                    contentDescription = "Назад",
-                    tint = MaterialTheme.colorScheme.onSurface
+                    contentDescription = "Назад"
                 )
             }
         },
         actions = {
+            IconButton(onClick = onWishlistClick) {
+                Icon(
+                    imageVector = if (isInWishlist) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    contentDescription = if (isInWishlist) "Удалить из вишлиста" else "Добавить в вишлист",
+                    tint = if (isInWishlist) androidx.compose.ui.graphics.Color.Red else MaterialTheme.colorScheme.onSurface
+                )
+            }
             IconButton(onClick = onShareClick) {
                 Icon(
                     painter = painterResource(id = android.R.drawable.ic_menu_share),
-                    contentDescription = "Поделиться",
-                    tint = MaterialTheme.colorScheme.onSurface
+                    contentDescription = "Поделиться"
                 )
             }
         },
@@ -543,16 +533,14 @@ fun Developer(
 fun AppDetailsScreenLoadingPreview() {
     MyApplicationTheme {
         AppDetailsContent(
-            uiState = AppDetailsUiState(
-                appDetails = null,
-                isLoading = true
-            ),
+            uiState = AppDetailsUiState(isLoading = true),
             onBackClick = {},
             onShareClick = {},
             onInstallClick = {},
             onScreenshotClick = {},
             onDeveloperClick = {},
             onReadMoreClick = {},
+            onWishlistClick = {},
             snackbarHostState = SnackbarHostState()
         )
     }
