@@ -36,6 +36,8 @@ class AppDetailsViewModel @Inject constructor(
             runCatching {
                 val item = getAppByIdUseCase(appId)
                 _appItem.value = item
+            }.onFailure { error ->
+
             }
             _isLoading.value = false
         }

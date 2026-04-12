@@ -1,17 +1,17 @@
 package com.example.myapplication.data.mapper
 
-import com.example.myapplication.data.dto.AppItemDto
+import com.example.myapplication.data.network.dto.CatalogItemDto
 import com.example.myapplication.domain.model.AppItem
 
-fun AppItemDto.mapToDomain(): AppItem {
+fun CatalogItemDto.mapToDomain(): AppItem {
     return AppItem(
         id = id,
-        icon = icon,
-        title = title,
+        icon = iconUrl,
+        title = name,
         description = description,
         category = category,
-        screenshotUrls = screenshotUrls
+        screenshotUrls = screenshotUrls ?: emptyList()
     )
 }
 
-fun List<AppItemDto>.mapToDomainList(): List<AppItem> = map { it.mapToDomain() }
+fun List<CatalogItemDto>.mapToDomainList(): List<AppItem> = map { it.mapToDomain() }

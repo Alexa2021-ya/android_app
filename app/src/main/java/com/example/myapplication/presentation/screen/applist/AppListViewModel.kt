@@ -42,6 +42,8 @@ class AppListViewModel @Inject constructor(
             runCatching {
                 val list = getAppListUseCase()
                 _appList.update { list }
+            }.onFailure { error ->
+                _snackbarEvent.send(SnackbarEvent.Show("Ошибка загрузки: ${error.message}"))
             }
             _isLoading.update { false }
         }
