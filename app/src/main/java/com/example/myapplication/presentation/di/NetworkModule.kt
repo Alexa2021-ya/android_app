@@ -1,7 +1,7 @@
-package com.example.myapplication.di
+package com.example.myapplication.presentation.di
 
 import com.example.myapplication.BuildConfig
-import com.example.myapplication.data.network.api.ApiService
+import com.example.myapplication.network.api.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

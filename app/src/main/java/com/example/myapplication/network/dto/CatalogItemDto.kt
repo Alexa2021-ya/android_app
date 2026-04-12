@@ -1,5 +1,4 @@
-// CatalogItemDto.kt
-package com.example.myapplication.data.network.dto
+package com.example.myapplication.network.dto
 
 import com.google.gson.annotations.SerializedName
 
@@ -15,5 +14,11 @@ data class CatalogItemDto(
     @SerializedName("iconUrl")
     val iconUrl: String,
     @SerializedName("screenshotUrls")
-    val screenshotUrls: List<String>? = null
+    val screenshotUrls: List<String>? = null,
+    @SerializedName("developer")
+    val developer: String? = null,
+    @SerializedName("ageRating")
+    val ageRating: Int? = null,
+    @SerializedName("size")
+    val size: Float? = null
 )

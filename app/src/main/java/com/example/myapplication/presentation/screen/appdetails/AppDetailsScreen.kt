@@ -52,13 +52,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.example.myapplication.domain.model.AppItem
+import com.example.myapplication.domain.appdetails.AppDetails
 import com.example.myapplication.presentation.component.AppIcon
 import com.example.myapplication.presentation.theme.MyApplicationTheme
 import kotlinx.coroutines.launch
 
 data class AppDetailsUiState(
-    val appItem: AppItem? = null,
+    val appDetails: AppDetails? = null,
     val isLoading: Boolean = false
 )
 
@@ -69,7 +69,7 @@ fun AppDetailsScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val appItem by viewModel.appItem.collectAsStateWithLifecycle()
+    val appDetails by viewModel.appDetails.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -79,7 +79,7 @@ fun AppDetailsScreen(
     ) {
         AppDetailsContent(
             uiState = AppDetailsUiState(
-                appItem = appItem,
+                appDetails = appDetails,
                 isLoading = isLoading
             ),
             onBackClick = onBackClick,
@@ -147,7 +147,7 @@ fun AppDetailsContent(
                 CircularProgressIndicator()
             }
         } else {
-            uiState.appItem?.let { item ->
+            uiState.appDetails?.let { details ->
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -162,7 +162,7 @@ fun AppDetailsContent(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     AppDetailsHeader(
-                        appItem = item,
+                        appDetails = details,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
 
@@ -177,9 +177,9 @@ fun AppDetailsContent(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    if (item.screenshotUrls.isNotEmpty()) {
+                    if (!details.screenshotUrlList.isNullOrEmpty()) {
                         ScreenshotsList(
-                            screenshotUrlList = item.screenshotUrls,
+                            screenshotUrlList = details.screenshotUrlList ?: emptyList(),
                             contentPadding = PaddingValues(horizontal = 16.dp),
                             onScreenshotClick = onScreenshotClick
                         )
@@ -188,7 +188,7 @@ fun AppDetailsContent(
                     }
 
                     AppDescription(
-                        description = item.description,
+                        description = details.description,
                         onReadMoreClick = onReadMoreClick
                     )
 
@@ -202,7 +202,7 @@ fun AppDetailsContent(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Developer(
-                        name = "Разработчик",
+                        name = details.developer,
                         onClick = onDeveloperClick,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -274,7 +274,7 @@ fun Toolbar(
 
 @Composable
 fun AppDetailsHeader(
-    appItem: AppItem,
+    appDetails: AppDetails,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -293,7 +293,7 @@ fun AppDetailsHeader(
                 contentAlignment = Alignment.Center
             ) {
                 AppIcon(
-                    iconString = appItem.icon,
+                    iconString = appDetails.iconUrl,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
@@ -309,7 +309,7 @@ fun AppDetailsHeader(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = appItem.title,
+                text = appDetails.name,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -320,7 +320,7 @@ fun AppDetailsHeader(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = appItem.category,
+                text = appDetails.category.name,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -340,7 +340,7 @@ fun AppDetailsHeader(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "• 12+",
+                    text = "• ${appDetails.ageRating}+",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
@@ -348,7 +348,7 @@ fun AppDetailsHeader(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "• 120 МБ",
+                    text = "• ${appDetails.size} МБ",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
@@ -540,42 +540,11 @@ fun Developer(
 
 @Preview(showBackground = true)
 @Composable
-fun AppDetailsScreenPreview() {
-    MyApplicationTheme {
-        AppDetailsContent(
-            uiState = AppDetailsUiState(
-                appItem = AppItem(
-                    id = "1",
-                    icon = "check_circle_unread_24px",
-                    title = "СберБанк Онлайн",
-                    description = "Больше чем банк. Управляйте финансами, платите, копите и инвестируйте. Мгновенные переводы, оплата услуг без комиссии, вклады под высокий процент, кредиты за 2 минуты. Кэшбэк бонусами Спасибо и биометрическая авторизация.",
-                    category = "Финансы",
-                    screenshotUrls = listOf(
-                        "https://apk28.ru/wp-content/uploads/f919ef6f-2715-4118-b006-5339bd596c2f-699x1024.jpg",
-                        "https://apk28.ru/wp-content/uploads/f919ef6f-2715-4118-b006-5339bd596c2f-699x1024.jpg",
-                        "https://apk28.ru/wp-content/uploads/f919ef6f-2715-4118-b006-5339bd596c2f-699x1024.jpg"
-                    )
-                ),
-                isLoading = false
-            ),
-            onBackClick = {},
-            onShareClick = {},
-            onInstallClick = {},
-            onScreenshotClick = {},
-            onDeveloperClick = {},
-            onReadMoreClick = {},
-            snackbarHostState = SnackbarHostState()
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
 fun AppDetailsScreenLoadingPreview() {
     MyApplicationTheme {
         AppDetailsContent(
             uiState = AppDetailsUiState(
-                appItem = null,
+                appDetails = null,
                 isLoading = true
             ),
             onBackClick = {},
