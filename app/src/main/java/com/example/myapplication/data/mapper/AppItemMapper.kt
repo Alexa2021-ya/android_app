@@ -3,19 +3,15 @@ package com.example.myapplication.data.mapper
 import com.example.myapplication.data.dto.AppItemDto
 import com.example.myapplication.domain.model.AppItem
 
-object AppItemMapper {
-    fun mapToDomain(dto: AppItemDto): AppItem {
-        return AppItem(
-            id = dto.id,
-            icon = dto.icon,
-            title = dto.title,
-            description = dto.description,
-            category = dto.category,
-            screenshotUrls = dto.screenshotUrls
-        )
-    }
-
-    fun mapToDomainList(dtoList: List<AppItemDto>): List<AppItem> {
-        return dtoList.map { mapToDomain(it) }
-    }
+fun AppItemDto.mapToDomain(): AppItem {
+    return AppItem(
+        id = id,
+        icon = icon,
+        title = title,
+        description = description,
+        category = category,
+        screenshotUrls = screenshotUrls
+    )
 }
+
+fun List<AppItemDto>.mapToDomainList(): List<AppItem> = map { it.mapToDomain() }

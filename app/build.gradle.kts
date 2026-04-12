@@ -1,15 +1,14 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
     namespace = "com.example.myapplication"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.myapplication"
@@ -30,10 +29,12 @@ android {
             )
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     buildFeatures {
         compose = true
     }
@@ -60,4 +61,9 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("io.coil-kt:coil:2.6.0")
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    implementation("com.google.dagger:hilt-android:2.57.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.57.1")
+
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 }
