@@ -2,6 +2,8 @@ package com.example.myapplication.presentation.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.myapplication.data.appdetails.AppDatabase
 import com.example.myapplication.data.appdetails.AppDetailsDao
 import dagger.Module
@@ -22,7 +24,11 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             AppDatabase.DATABASE_NAME
-        ).build()
+        ).addMigrations(object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE app_details ADD COLUMN isInWishlist INTEGER NOT NULL DEFAULT 0")
+            }
+        }).build()
     }
 
     @Provides

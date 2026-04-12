@@ -8,6 +8,8 @@ import com.example.myapplication.network.dto.CatalogItemDto
 import com.example.myapplication.domain.appdetails.AppDetails
 import com.example.myapplication.domain.appdetails.Category
 import com.example.myapplication.domain.repository.AppDetailsRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
@@ -33,6 +35,41 @@ class AppDetailsRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun observeAppDetails(id: String): Flow<AppDetails> = channelFlow {
+        var entity = dao.getAppDetails(id).firstOrNull()
+        if (entity == null) {
+            val dto = try {
+                apiService.getAppDetails(id)
+            } catch (e: Exception) {
+                close(e)
+                return@channelFlow
+            }
+            entity = mapDtoToEntity(dto)
+            dao.insertAppDetails(entity)
+        }
+
+        send(entityMapper.toDomain(entity))
+
+        dao.getAppDetails(id).collect { updatedEntity ->
+            updatedEntity?.let { send(entityMapper.toDomain(it)) }
+        }
+    }
+
+    override suspend fun toggleWishlist(id: String) {
+        var entity = dao.getAppDetails(id).firstOrNull()
+        if (entity == null) {
+            val dto = try {
+                apiService.getAppDetails(id)
+            } catch (e: Exception) {
+                return
+            }
+            entity = mapDtoToEntity(dto)
+            dao.insertAppDetails(entity)
+        }
+
+        dao.updateWishlistStatus(id, !entity.isInWishlist)
+    }
+
     private fun mapDtoToEntity(dto: CatalogItemDto): AppDetailsEntity {
         return AppDetailsEntity(
             id = dto.id,
@@ -44,7 +81,8 @@ class AppDetailsRepositoryImpl @Inject constructor(
             iconUrl = dto.iconUrl,
             screenshots = dto.screenshotUrls?.joinToString(","),
             description = dto.description,
-            lastUpdated = System.currentTimeMillis()
+            lastUpdated = System.currentTimeMillis(),
+            isInWishlist = false
         )
     }
 
