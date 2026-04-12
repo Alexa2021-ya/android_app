@@ -21,6 +21,7 @@ sealed interface SnackbarEvent {
 @HiltViewModel
 class AppListViewModel @Inject constructor(
     private val getAppListUseCase: GetAppListUseCase
+
 ) : ViewModel() {
 
     private val _appList = MutableStateFlow<List<AppItem>>(emptyList())
