@@ -8,9 +8,11 @@ import com.example.myapplication.network.dto.CatalogItemDto
 import com.example.myapplication.domain.appdetails.AppDetails
 import com.example.myapplication.domain.appdetails.Category
 import com.example.myapplication.domain.repository.AppDetailsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AppDetailsRepositoryImpl @Inject constructor(
@@ -19,54 +21,55 @@ class AppDetailsRepositoryImpl @Inject constructor(
     private val entityMapper: AppDetailsEntityMapper
 ) : AppDetailsRepository {
 
-    override suspend fun getAppDetails(id: String): AppDetails? {
+    override suspend fun getAppDetails(id: String): AppDetails? = withContext(Dispatchers.IO) {
         val entity = dao.getAppDetails(id).firstOrNull()
-        return if (entity != null) {
-            entityMapper.toDomain(entity)
+        if (entity != null) {
+            return@withContext entityMapper.toDomain(entity)
         } else {
             val dto = try {
                 apiService.getAppDetails(id)
             } catch (e: Exception) {
-                return null
+                return@withContext null
             }
             val newEntity = mapDtoToEntity(dto)
             dao.insertAppDetails(newEntity)
-            entityMapper.toDomain(newEntity)
+            return@withContext entityMapper.toDomain(newEntity)
         }
     }
 
     override fun observeAppDetails(id: String): Flow<AppDetails> = channelFlow {
-        var entity = dao.getAppDetails(id).firstOrNull()
-        if (entity == null) {
-            val dto = try {
-                apiService.getAppDetails(id)
-            } catch (e: Exception) {
-                close(e)
-                return@channelFlow
+        withContext(Dispatchers.IO) {
+            var entity = dao.getAppDetails(id).firstOrNull()
+            if (entity == null) {
+                val dto = try {
+                    apiService.getAppDetails(id)
+                } catch (e: Exception) {
+                    close(e)
+                    return@withContext
+                }
+                entity = mapDtoToEntity(dto)
+                dao.insertAppDetails(entity)
             }
-            entity = mapDtoToEntity(dto)
-            dao.insertAppDetails(entity)
-        }
 
-        send(entityMapper.toDomain(entity))
+            send(entityMapper.toDomain(entity))
 
-        dao.getAppDetails(id).collect { updatedEntity ->
-            updatedEntity?.let { send(entityMapper.toDomain(it)) }
+            dao.getAppDetails(id).collect { updatedEntity ->
+                updatedEntity?.let { send(entityMapper.toDomain(it)) }
+            }
         }
     }
 
-    override suspend fun toggleWishlist(id: String) {
+    override suspend fun toggleWishlist(id: String) = withContext(Dispatchers.IO) {
         var entity = dao.getAppDetails(id).firstOrNull()
         if (entity == null) {
             val dto = try {
                 apiService.getAppDetails(id)
             } catch (e: Exception) {
-                return
+                return@withContext
             }
             entity = mapDtoToEntity(dto)
             dao.insertAppDetails(entity)
         }
-
         dao.updateWishlistStatus(id, !entity.isInWishlist)
     }
 
